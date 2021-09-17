@@ -14,10 +14,14 @@ import spark.template.freemarker.FreeMarkerEngine;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,20 +64,42 @@ public final class Main {
     }
 
     try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
+      List<List<String>> records = new ArrayList<>();
       String input;
       while ((input = br.readLine()) != null) {
         try {
           input = input.trim();
           String[] arguments = input.split(" ");
           MathBot math = new MathBot();
-          if (arguments[0].equals("add")) {
-            double resAdd =
-                math.add(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
-            System.out.println(resAdd);
-          } else if (arguments[0].equals("subtract")) {
-            double resSub =
-                math.subtract(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
-            System.out.println(resSub);
+          switch (arguments[0]) {
+            case "add":
+              double resAdd =
+                  math.add(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
+              System.out.println(resAdd);
+              break;
+            case "subtract":
+              double resSub =
+                  math.subtract(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
+              System.out.println(resSub);
+              break;
+            case "stars":
+              // parse CSV
+              String DELIM = ",";
+              String line = "";
+              BufferedReader fileReader = new BufferedReader(new FileReader(arguments[1]));
+              // get one line from csv, split data by comma, store
+              // read each line
+              while ((line = fileReader.readLine()) != null) {
+                String[] row = line.split(DELIM);
+//                for (String col : row) {
+//                  System.out.println(col);
+//                }
+                records.add(Arrays.asList(row));
+              }
+              break;
+            case "naive_neighbors":
+              // compute ___ given k, x, y, z
+              break;
           }
         } catch (Exception e) {
           // e.printStackTrace();
