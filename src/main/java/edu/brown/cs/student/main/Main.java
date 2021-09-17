@@ -1,15 +1,6 @@
 package edu.brown.cs.student.main;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Map;
-
 import com.google.common.collect.ImmutableMap;
-
 import freemarker.template.Configuration;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -20,6 +11,14 @@ import spark.Response;
 import spark.Spark;
 import spark.TemplateViewRoute;
 import spark.template.freemarker.FreeMarkerEngine;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Map;
 
 /**
  * The Main class of our project. This is where execution begins.
@@ -67,13 +66,16 @@ public final class Main {
         try {
           input = input.trim();
           String[] arguments = input.split(" ");
-          System.out.println("You entered: " + arguments[0]);
-
           MathBot math = new MathBot();
-          double resAdd = math.add(Double.parseDouble(arguments[0]), Double.parseDouble(arguments[1]));
-          double resSub = math.subtract(Double.parseDouble(arguments[0]), Double.parseDouble(arguments[1]));
-          System.out.println("Adding " + arguments[0] + " and " + arguments[1] + " equals " + resAdd);
-          System.out.println("Subtracting " + arguments[1] + " from " + arguments[0] + " equals " + resSub);
+          if (arguments[0].equals("add")) {
+            double resAdd =
+                math.add(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
+            System.out.println(resAdd);
+          } else if (arguments[0].equals("subtract")) {
+            double resSub =
+                math.subtract(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
+            System.out.println(resSub);
+          }
         } catch (Exception e) {
           // e.printStackTrace();
           System.out.println("ERROR: We couldn't process your input");
