@@ -21,6 +21,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -84,22 +85,82 @@ public final class Main {
               break;
             case "stars":
               // parse CSV
-              String DELIM = ",";
-              String line = "";
+              String delim = ",";
+              String line;
               BufferedReader fileReader = new BufferedReader(new FileReader(arguments[1]));
               // get one line from csv, split data by comma, store
               // read each line
               while ((line = fileReader.readLine()) != null) {
-                String[] row = line.split(DELIM);
-//                for (String col : row) {
-//                  System.out.println(col);
-//                }
+                // ignore the schema (first row)
+                if (line.contains("StarID")) {
+                  continue;
+                }
+                String[] row = line.split(delim);
                 records.add(Arrays.asList(row));
               }
+              System.out.println("Read " + records.size() + " stars from " + arguments[1]);
               break;
             case "naive_neighbors":
-              // compute ___ given k, x, y, z
+              // find root_star
+              List<String> rootStar = new ArrayList<>();
+              // if input format is K, starName
+              if (arguments.length == 3) {
+                for (List<String> row : records) {
+                  // if the proper name of this star (row) is equal to the input, we've found the star
+                  if (row.get(1).equals(arguments[2].replace("\"", ""))) {
+                    rootStar = row;
+                  }
+                }
+                // if input format is K, coords
+              } else if (arguments.length == 5) {
+                rootStar = new ArrayList<>() {
+                  {
+                    add("");
+                    add("");
+                    add(arguments[2]);
+                    add(arguments[3]);
+                    add(arguments[4]);
+                  }
+                };
+              } else {
+                // how handle spaces in name of input star? "Lonely Star" makes arguments array
+                // have an extra 2 length instead of 1...
+                break;
+              }
+              // find euclidean distance between input star and all other stars in the dataset
+
+              // find distance between all other stars in the dataset and this star
+              for (List<String> row : records) {
+                // keep track of star by index
+                double distToRoot = math.eucDistanceBetween(rootStar, row);
+                // add distance to this row (star) at index 5 ==> overwritten name at index 1 since can't add
+                row.set(1, Double.toString(distToRoot));
+//                row.add(Double.toString(distToRoot));
+              }
+              // sort stars (records) in ascending order using the eucDistance col => using index 1 now instead of 5
+              records.sort(Comparator.comparingDouble(row -> Double.parseDouble(row.get(1))));
+              ArrayList<String> nearestStars = new ArrayList<>();
+              // extract first K stars (those with the shortest distances)
+              double kNearest = Double.parseDouble(arguments[1]);
+              if (arguments.length == 3) {
+                for (int i = 0; i < kNearest + 1 && i < records.size(); i++) {
+                  // skip rootStar if in dataset
+                  if (rootStar.get(0).equals(records.get(i).get(0))) {
+                    continue;
+                  }
+                  nearestStars.add(records.get(i).get(0));
+                }
+              } else {
+                for (int i = 0; i < kNearest; i++) {
+                  nearestStars.add(records.get(i).get(0));
+                }
+              }
+              for (String star : nearestStars) {
+                System.out.println(star);
+              }
               break;
+            default:
+              throw new Exception("Incorrect Command");
           }
         } catch (Exception e) {
           // e.printStackTrace();

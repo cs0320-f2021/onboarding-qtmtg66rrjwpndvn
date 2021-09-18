@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MathBotTest {
 
   @Test
@@ -53,5 +56,48 @@ public class MathBotTest {
     MathBot matherator9006 = new MathBot();
     double output = matherator9006.add(999999, 1);
     assertEquals(1000000, output, 0.01);
+  }
+
+  @Test
+  public void testEuclideanOne() {
+    MathBot matherator9007 = new MathBot();
+    List<String> row1 = new ArrayList<>() {
+      {
+        add("1");
+        add("Lonely Star");
+        add("5");
+        add("-2.24");
+        add("10.04");
+      }
+    };
+    double output = matherator9007.eucDistanceBetween(row1, row1);
+    assertEquals(0, output, 0.01);
+  }
+
+  @Test
+  public void testEuclideanFive() {
+    MathBot matherator9008 = new MathBot();
+    List<String> row1 = new ArrayList<>() {
+      {
+        add("0");
+        add("Sol");
+        add("0");
+        add("0");
+        add("0");
+      }
+    };
+
+    List<String> row2 = new ArrayList<>() {
+      {
+        add("1");
+        add("");
+        add("282.43485");
+        add("0.00449");
+        add("5.36884");
+      }
+    };
+
+    double output = matherator9008.eucDistanceBetween(row1, row2);
+    assertEquals(282.485, output, 0.01);
   }
 }
