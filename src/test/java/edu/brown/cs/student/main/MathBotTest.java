@@ -75,7 +75,7 @@ public class MathBotTest {
   }
 
   @Test
-  public void testEuclideanFive() {
+  public void testEuclideanTwo() {
     MathBot matherator9008 = new MathBot();
     List<String> row1 = new ArrayList<>() {
       {
@@ -96,8 +96,59 @@ public class MathBotTest {
         add("5.36884");
       }
     };
-
     double output = matherator9008.eucDistanceBetween(row1, row2);
     assertEquals(282.485, output, 0.01);
+  }
+
+  @Test
+  public void testEuclideanZeroDist() {
+    MathBot matherator9009 = new MathBot();
+    List<String> row1 = new ArrayList<>() {
+      {
+        add("0");
+        add("Sol");
+        add("0");
+        add("0");
+        add("0");
+      }
+    };
+
+    List<String> row2 = new ArrayList<>() {
+      {
+        add("0");
+        add("Sol");
+        add("0");
+        add("0");
+        add("0");
+      }
+    };
+    double output = matherator9009.eucDistanceBetween(row1, row2);
+    assertEquals(0, output, 0.01);
+  }
+
+  @Test
+  public void testEuclideanTwoNonZero() {
+    MathBot matherator9010 = new MathBot();
+    List<String> row1 = new ArrayList<>() {
+      {
+        add("2");
+        add("");
+        add("43.04329");
+        add("0.00285");
+        add("-15.24144");
+      }
+    };
+
+    List<String> row2 = new ArrayList<>() {
+      {
+        add("3");
+        add("");
+        add("277.11358");
+        add("0.02422");
+        add("223.27753");
+      }
+    };
+    double output = matherator9010.eucDistanceBetween(row1, row2);
+    assertEquals(334.18587, output, 0.01);
   }
 }

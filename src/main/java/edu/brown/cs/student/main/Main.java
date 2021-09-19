@@ -103,16 +103,8 @@ public final class Main {
             case "naive_neighbors":
               // find root_star
               List<String> rootStar = new ArrayList<>();
-              // if input format is K, starName
-              if (arguments.length == 3) {
-                for (List<String> row : records) {
-                  // if the proper name of this star (row) is equal to the input, we've found the star
-                  if (row.get(1).equals(arguments[2].replace("\"", ""))) {
-                    rootStar = row;
-                  }
-                }
-                // if input format is K, coords
-              } else if (arguments.length == 5) {
+              // if input format is K, coords
+              if (arguments.length == 5) {
                 rootStar = new ArrayList<>() {
                   {
                     add("");
@@ -122,36 +114,49 @@ public final class Main {
                     add(arguments[4]);
                   }
                 };
+                // if input format is K, starName
               } else {
-                // how handle spaces in name of input star? "Lonely Star" makes arguments array
-                // have an extra 2 length instead of 1...
-                break;
+                // handle spaces in name of input star e.g. "Lonely Star"
+                // by concatenating
+                StringBuilder starName = new StringBuilder("");
+                // if name is multiple words long, separate by spaces
+                for (int i = 2; i < arguments.length; i++) {
+                  starName.append(arguments[i]);
+                  if (arguments.length > 3 && i != arguments.length - 1) {
+                    starName.append(" ");
+                  }
+                }
+                for (List<String> row : records) {
+                  // if the proper name of this star (row) is equal to the input, we've found the star
+                  if (row.get(1).equals(starName.toString().replace("\"", ""))) {
+                    rootStar = row;
+                  }
+                }
               }
               // find euclidean distance between input star and all other stars in the dataset
-
-              // find distance between all other stars in the dataset and this star
               for (List<String> row : records) {
-                // keep track of star by index
                 double distToRoot = math.eucDistanceBetween(rootStar, row);
-                // add distance to this row (star) at index 5 ==> overwritten name at index 1 since can't add
+                // add distance to this row (star) at index 1, overwriting proper name
                 row.set(1, Double.toString(distToRoot));
-//                row.add(Double.toString(distToRoot));
+                // row.add(Double.toString(distToRoot));
               }
-              // sort stars (records) in ascending order using the eucDistance col => using index 1 now instead of 5
+              // sort stars (records) in ascending order using the eucDistance col
               records.sort(Comparator.comparingDouble(row -> Double.parseDouble(row.get(1))));
               ArrayList<String> nearestStars = new ArrayList<>();
               // extract first K stars (those with the shortest distances)
               double kNearest = Double.parseDouble(arguments[1]);
-              if (arguments.length == 3) {
+              // if format is K, coords
+              if (arguments.length == 5) {
+                for (int i = 0; i < kNearest; i++) {
+                  nearestStars.add(records.get(i).get(0));
+                }
+              } else {
+                // if format is K, properName
                 for (int i = 0; i < kNearest + 1 && i < records.size(); i++) {
                   // skip rootStar if in dataset
                   if (rootStar.get(0).equals(records.get(i).get(0))) {
                     continue;
                   }
-                  nearestStars.add(records.get(i).get(0));
-                }
-              } else {
-                for (int i = 0; i < kNearest; i++) {
                   nearestStars.add(records.get(i).get(0));
                 }
               }
@@ -167,7 +172,8 @@ public final class Main {
           System.out.println("ERROR: We couldn't process your input");
         }
       }
-    } catch (Exception e) {
+    } catch (
+        Exception e) {
       e.printStackTrace();
       System.out.println("ERROR: Invalid input for REPL");
     }
